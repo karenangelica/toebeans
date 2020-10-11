@@ -1,0 +1,16 @@
+<resources>
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+
+        <item name="colorPrimary">#000000</item>
+        <item name="colorPrimaryVariant">#FFD300</item>
+        <item name="colorOnPrimary">#FFFDDD</item>
+        <item name="colorOnSurface">#F9F9F9</item>
+
+    </style>
+
+    <style name="MenuFont">
+        <item name="fontFamily">@font/segoe_print</item>
+    </style>
+
+</resources>

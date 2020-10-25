@@ -23,12 +23,7 @@ public abstract class CatRoomDatabase : RoomDatabase() {
                 return tempInstance
             }
             synchronized(this) {
-                val instance = Room.databaseBuilder(
-                    context.applicationContext,
-                    CatRoomDatabase::class.java,
-                    "Cats"
-                ).allowMainThreadQueries()
-                    .build()
+                val instance = Room.databaseBuilder(context.applicationContext, CatRoomDatabase::class.java, "Cats").allowMainThreadQueries().build()
                 INSTANCE = instance
                 return instance
             }

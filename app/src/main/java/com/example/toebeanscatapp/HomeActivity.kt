@@ -6,11 +6,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.fragment.app.DialogFragment
 import com.example.toebeanscatapp.databinding.ActivityHomeBinding
 import com.example.toebeanscatapp.dependencyInjector.DependencyInjectorImpl
 import com.example.toebeanscatapp.helpers.createCustomPicassoLoader
@@ -21,12 +24,14 @@ import com.example.toebeanscatapp.roomdb.Cats
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.navigation.NavigationView
 import com.squareup.picasso.Picasso
+import kotlinx.coroutines.*
 
 class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener,
     HomeContract.View {
 
     private lateinit var binding: ActivityHomeBinding
     private lateinit var picasso: Picasso
+    private lateinit var scope: CoroutineScope
 
     private lateinit var toolbar: Toolbar
     private lateinit var drawerLayout: DrawerLayout
@@ -34,12 +39,15 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var url: String
     private lateinit var name: String
     private lateinit var presenter: HomePresenter
+    private lateinit var dialog : AlertDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityHomeBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
+
+        scope = CoroutineScope(Dispatchers.IO)
 
         picasso = createCustomPicassoLoader(this)
         presenter = HomePresenter(DependencyInjectorImpl.catRepository(this))
@@ -54,8 +62,10 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         binding.happyBtn.setOnClickListener {
 
-            presenter.onHappyBtnClicked()
-
+            //presenter.onHappyBtnClicked()
+            scope.launch {
+                presenter.onHappyBtnClicked()
+            }
         }
 
         binding.yesBtn1.setOnClickListener {
@@ -70,16 +80,6 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun openDialog() {
 
-//        val builder = AlertDialog.Builder(this@HomeActivity)
-//        builder.setTitle("Am i your meow meow?")
-//        builder.setMessage("Do you want to add this cat to your favorites?")
-//        builder.setPositiveButton("Yes") { dialog: DialogInterface?, Int ->
-//            presenter.onDialogYesClicked(url, "chonky")
-//        }
-//        builder.setNegativeButton("No") { dialog: DialogInterface?, Int ->
-//            //do nothing
-//        }
-//        builder.show()
         val view: View = layoutInflater.inflate(R.layout.open_dialog, findViewById<ViewGroup>(R.id.content), false)
         val dialog = MaterialAlertDialogBuilder(this).setView(view).setCancelable(false).create()
         dialog.show()
@@ -109,6 +109,20 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         this.url = url
     }
 
+    override fun showLoadingDialog() {
+        val view: View = layoutInflater.inflate(R.layout.loading_dialog, findViewById<ViewGroup>(R.id.content), false)
+        dialog = MaterialAlertDialogBuilder(this).setView(view).setCancelable(true).create()
+        dialog.show()
+    }
+
+    override fun hideLoadingDialog() {
+        dialog.dismiss()
+    }
+
+    override fun showErrorToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+
     private fun setUpToolBar() {
         toolbar = binding.appBar
         setSupportActionBar(toolbar)
@@ -120,6 +134,12 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         toggle.syncState()
 
         navView.setNavigationItemSelectedListener(this)
+    }
+
+    private suspend fun getRandomCatFromAPI() {
+        delay(1000) // delaying this
+
+
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {

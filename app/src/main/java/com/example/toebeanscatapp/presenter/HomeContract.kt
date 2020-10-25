@@ -15,5 +15,8 @@ interface HomeContract {
         fun navigateToFavorites()
         fun showCatPicture(url: String)
         fun setUrl(url : String)
+        fun showLoadingDialog()
+        fun hideLoadingDialog()
+        fun showErrorToast(message : String)
     }
 }

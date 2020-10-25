@@ -7,8 +7,10 @@ import androidx.room.Query
 
 @Dao
 interface CatDao {
+
     @Query("SELECT * FROM Cats")
-            fun getAllCats(): List<Cats>
+    fun getAllCats(): List<Cats>
+
     @Insert
     fun insertALL(cat: Cats)
 

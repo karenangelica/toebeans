@@ -20,10 +20,7 @@ fun getUnsafeOkHttpClient(context: Context): OkHttpClient {
         ) {
         }
 
-        override fun checkServerTrusted(
-            chain: Array<out X509Certificate>?,
-            authType: String?
-        ) {
+        override fun checkServerTrusted( chain: Array<out X509Certificate>?, authType: String?) {
         }
 
         override fun getAcceptedIssuers() = arrayOf<X509Certificate>()
